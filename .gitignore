@@ -3,3 +3,4 @@ node_modules
 /node_modules
 ./server/config/config.js
 /server/config/config.js
+./koa_attempt
