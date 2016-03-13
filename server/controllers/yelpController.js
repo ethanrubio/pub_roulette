@@ -15,6 +15,7 @@ const yelp = new Yelp({
 
 module.exports = {
   search: (req, res, next) => {
+    console.log(req);
     let lat = req.body.lat;
     let long = req.body.long;
     let latLongString = lat + ',' + long;
