@@ -1,4 +1,4 @@
-import { Component } from 'angular2/core';
+import { Component, OnInit } from 'angular2/core';
 
 @Component({
   selector: 'my-map',
@@ -9,20 +9,32 @@ import { Component } from 'angular2/core';
   `],
   templateUrl: 'app/map.component.html'
 })
-export class MapComponent {
+export class MapComponent implements onInit {
   constructor() {
-    this.map = null;
   }
   
-  loadMap(lat, long, barName, endLat, endLong) {
+  ngOnInit() {
+    let mapOptions = {
+      center: {lat: 34.0192684, lng: -118.4965408},
+      zoom: 15,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    this.map = new google.maps.Map(document.getElementById("map"), mapOptions);  
+  }
+  
+  loadMap(lat, long, barName, barAddress, endLat, endLong) {
     let latLng = new google.maps.LatLng(lat, long);
+    let endLatLng = new google.maps.LatLng(endLat, endLong);
+    let latlngs = [];
+    latlngs.push(latLng);
+    latlngs.push(endLatLng);
     let barPosition = {lat: endLat, lng: endLong};
 
     let mapOptions = {
       center: latLng,
       zoom: 15,
       mapTypeId: google.maps.MapTypeId.ROADMAP
-    }
+    };
 
     this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
     
@@ -42,9 +54,22 @@ export class MapComponent {
       position: barPosition
     });
 
-    let endContent = `<h4>${barName}</h4>`;
+    let endContent = `
+    <h4>${barName}</h4>
+    <p>${barAddress}</p>`;
 
     this.addInfoWindow(endMarker, endContent);
+    
+    // map: an instance of GMap3
+    // latlng: an array of instances of GLatLng
+    var latlngbounds = new google.maps.LatLngBounds();
+    latlngs.forEach(n => {
+      latlngbounds.extend(n);
+    });
+    
+    this.map.setCenter(latlngbounds.getCenter());
+    this.map.fitBounds(latlngbounds); 
+    
   }
 
   addInfoWindow(marker, content){

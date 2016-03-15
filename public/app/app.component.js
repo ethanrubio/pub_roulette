@@ -62,13 +62,14 @@ System.register(['angular2/core', 'angular2/http', 'angular2/router', "ng2-mater
                             _this._yelp.search(position, headers)
                                 .then(function (result) {
                                 var barName = result.name;
+                                var barAddress = result.location.display_address[0] + ' ' + result.location.display_address[2];
                                 var endLat = result.location.coordinate.latitude;
                                 var endLong = result.location.coordinate.longitude;
-                                var journey = "startLat=" + lat + "&startLong=" + long + "&endLat=" + endLat + "&endLong=" + endLong;
+                                var journey = 'startLat=' + lat + '&startLong=' + long + '&endLat=' + endLat + '&endLong=' + endLong;
                                 _this._uber.journey(journey, headers)
                                     .then(function (result) {
                                     console.log('this is the uber result from the roulette call ', result);
-                                    _this._map.loadMap(lat, long, barName, endLat, endLong);
+                                    _this._map.loadMap(lat, long, barName, barAddress, endLat, endLong);
                                 });
                             })
                                 .catch(function (error) {

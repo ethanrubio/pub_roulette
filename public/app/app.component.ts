@@ -27,7 +27,7 @@ import 'rxjs/add/operator/map';
 
 ])
 export class AppComponent implements OnInit {
-  title = 'Pub Roulette'
+  title = 'Pub Roulette';
 
   constructor(
     private _http:Http, 
@@ -55,13 +55,14 @@ export class AppComponent implements OnInit {
         this._yelp.search(position, headers)
           .then(result => {
             let barName = result.name;
+            let barAddress = result.location.display_address[0] + ' ' + result.location.display_address[2];
             let endLat = result.location.coordinate.latitude;
             let endLong = result.location.coordinate.longitude;
-            let journey = "startLat=" + lat + "&startLong=" + long + "&endLat=" + endLat + "&endLong=" + endLong;
+            let journey = 'startLat=' + lat + '&startLong=' + long + '&endLat=' + endLat + '&endLong=' + endLong;
             this._uber.journey(journey, headers)
               .then(result => {
                 console.log('this is the uber result from the roulette call ', result);
-                this._map.loadMap(lat, long, barName, endLat, endLong);
+                this._map.loadMap(lat, long, barName, barAddress, endLat, endLong);
               });
           })
             .catch(error => {

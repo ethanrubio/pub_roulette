@@ -20,10 +20,21 @@ System.register(['angular2/core'], function(exports_1, context_1) {
         execute: function() {
             MapComponent = (function () {
                 function MapComponent() {
-                    this.map = null;
                 }
-                MapComponent.prototype.loadMap = function (lat, long, barName, endLat, endLong) {
+                MapComponent.prototype.ngOnInit = function () {
+                    var mapOptions = {
+                        center: { lat: 34.0192684, lng: -118.4965408 },
+                        zoom: 15,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    };
+                    this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+                };
+                MapComponent.prototype.loadMap = function (lat, long, barName, barAddress, endLat, endLong) {
                     var latLng = new google.maps.LatLng(lat, long);
+                    var endLatLng = new google.maps.LatLng(endLat, endLong);
+                    var latlngs = [];
+                    latlngs.push(latLng);
+                    latlngs.push(endLatLng);
                     var barPosition = { lat: endLat, lng: endLong };
                     var mapOptions = {
                         center: latLng,
@@ -43,8 +54,16 @@ System.register(['angular2/core'], function(exports_1, context_1) {
                         animation: google.maps.Animation.DROP,
                         position: barPosition
                     });
-                    var endContent = "<h4>" + barName + "</h4>";
+                    var endContent = "\n    <h4>" + barName + "</h4>\n    <p>" + barAddress + "</p>";
                     this.addInfoWindow(endMarker, endContent);
+                    // map: an instance of GMap3
+                    // latlng: an array of instances of GLatLng
+                    var latlngbounds = new google.maps.LatLngBounds();
+                    latlngs.forEach(function (n) {
+                        latlngbounds.extend(n);
+                    });
+                    this.map.setCenter(latlngbounds.getCenter());
+                    this.map.fitBounds(latlngbounds);
                 };
                 MapComponent.prototype.addInfoWindow = function (marker, content) {
                     console.log('addInfoWindow is called! ', marker, content);
