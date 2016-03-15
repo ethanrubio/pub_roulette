@@ -11,7 +11,7 @@ System.register(['angular2/core', 'angular2/http'], function(exports_1, context_
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, http_1;
-    var yelpAPI;
+    var YelpService;
     return {
         setters:[
             function (core_1_1) {
@@ -21,31 +21,56 @@ System.register(['angular2/core', 'angular2/http'], function(exports_1, context_
                 http_1 = http_1_1;
             }],
         execute: function() {
-            yelpAPI = (function () {
-                function yelpAPI(http) {
+            YelpService = (function () {
+                function YelpService(_http) {
+                    this._http = _http;
                 }
-                yelpAPI.prototype.search = function () {
+                YelpService.prototype.search = function (position, headers) {
                     var _this = this;
-                    return Promise.resolve();
-                    this.http.post("https://httpbin.org/post", "firstname=Nic")
-                        .subscribe(function (data) {
-                        var alert = Alert.create({
-                            title: "Data String",
-                            subTitle: data.json().data,
-                            buttons: ["close"]
-                        });
-                        _this.nav.present(alert);
-                    }, function (error) {
-                        console.log(JSON.stringify(error.json()));
+                    var yelpPromise = new Promise(function (resolve, reject) {
+                        console.log('hi from yelp promise');
+                        _this._http.post('/api/yelp/location', position, {
+                            headers: headers
+                        })
+                            .map(function (res) { return res.json(); })
+                            .subscribe(function (data) {
+                            console.log(data);
+                            resolve(data);
+                        }, function (err) { return reject(err); }, function () { return console.log('yelp received'); });
                     });
+                    return yelpPromise;
+                    //  this._http.post('/api/yelp/location', position , {
+                    //         headers: headers
+                    //         })
+                    //         .map(res => res.json())
+                    //         .subscribe(
+                    //           data => {
+                    //             console.log(data)
+                    //             // startLat: startLat, startLong: startLong, endLat: endLat, endLong: endLong
+                    //             let endLat = data.location.coordinate.latitude;
+                    //             let endLong = data.location.coordinate.longitude;
+                    //             let journey = "startLat=" + lat + "&startLong=" + long + "&endLat=" + endLat + "&endLong=" + endLong;
+                    //             this._http.post('/api/uber/journey', journey , {
+                    //               headers: headers
+                    //               })
+                    //               .map(res => res.json())
+                    //               .subscribe(
+                    //                 data => console.log(data),
+                    //                 err => console.log(err),
+                    //                 () => console.log('uber received')
+                    //               );
+                    //             }, // call uber api
+                    //           err => console.log(err),
+                    //           () => console.log('yelp received')
+                    //         );
                 };
-                yelpAPI = __decorate([
+                YelpService = __decorate([
                     core_1.Injectable(), 
                     __metadata('design:paramtypes', [http_1.Http])
-                ], yelpAPI);
-                return yelpAPI;
+                ], YelpService);
+                return YelpService;
             }());
-            exports_1("yelpAPI", yelpAPI);
+            exports_1("YelpService", YelpService);
         }
     }
 });
